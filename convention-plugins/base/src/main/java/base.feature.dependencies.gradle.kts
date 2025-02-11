@@ -17,14 +17,15 @@ androidConfig {
 }
 
 dependencies {
-    implementation(project(":core:core-common"))
-    implementation(project(":core:core-local-api"))
-    implementation(project(":core:core-network-api"))
+    implementation(project(":core:common"))
+    implementation(project(":core:local-api"))
+    implementation(project(":core:network-api"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.constraintlayout)
 
     implementation(libs.dagger)

@@ -16,7 +16,9 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:local-api"))
-    implementation(project(":core:local-api"))
+    implementation(project(":core:local-impl"))
     implementation(project(":core:network-api"))
     implementation(project(":core:network-impl"))
+    implementation(project(":core:player-api"))
+    implementation(project(":core:player-impl"))
 }
