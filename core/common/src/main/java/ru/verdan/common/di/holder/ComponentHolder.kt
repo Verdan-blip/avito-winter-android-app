@@ -1,9 +1,9 @@
 package ru.verdan.common.di.holder
 
 import android.content.Context
-import ru.verdan.common.di.component.DiComponent
+import ru.verdan.common.di.component.BaseComponent
 
-abstract class ComponentHolder<T : DiComponent> {
+abstract class ComponentHolder<T : BaseComponent> {
 
     private var component: T? = null
 
