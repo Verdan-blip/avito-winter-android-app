@@ -4,5 +4,5 @@ import ru.verdan.common.di.component.ComponentDependencies
 
 interface ComponentDependenciesContainer {
 
-    fun <T : ComponentDependencies> getDependencies(key: Class<T>): T
+    fun <T : ComponentDependencies> getDependencies(key: Class<out T>): T
 }

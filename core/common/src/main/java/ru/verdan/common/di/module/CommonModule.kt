@@ -4,7 +4,8 @@ import dagger.Module
 
 @Module(
     includes = [
-        CoroutinesModule::class
+        CoroutinesModule::class,
+        ResourceModule::class
     ]
 )
 interface CommonModule

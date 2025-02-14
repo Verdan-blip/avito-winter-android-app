@@ -21,10 +21,14 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.fragment)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.bundles.lifecycle)
+    implementation(libs.viewbinding)
 
     implementation(libs.dagger)
+    implementation(libs.bundles.navigation)
+    implementation(libs.bundles.network)
     ksp(libs.dagger.compiler)
 
     testImplementation(libs.junit)

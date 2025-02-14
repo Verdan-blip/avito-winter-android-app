@@ -1,16 +1,18 @@
 package ru.verdan.common.di.holder
 
 import android.content.Context
-import ru.verdan.common.di.component.DiComponent
+import ru.verdan.common.di.component.BaseComponent
+import ru.verdan.common.di.container.ComponentDependenciesContainer
 
-abstract class ComponentHolder<T : DiComponent> {
+abstract class ComponentHolder<T : BaseComponent> {
 
     private var component: T? = null
 
-    protected abstract fun init(context: Context): T
+    protected abstract fun init(container: ComponentDependenciesContainer): T
 
     fun create(context: Context): T {
-        return init(context).also { component = it }
+        return init(context.applicationContext as ComponentDependenciesContainer)
+            .also { component = it }
     }
 
     fun release() {

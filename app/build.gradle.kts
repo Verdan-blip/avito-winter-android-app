@@ -15,10 +15,14 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
+    implementation(project(":core:theme"))
     implementation(project(":core:local-api"))
     implementation(project(":core:local-impl"))
     implementation(project(":core:network-api"))
     implementation(project(":core:network-impl"))
     implementation(project(":core:player-api"))
     implementation(project(":core:player-impl"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:loaded-tracks"))
+    implementation(project(":feature:track-player"))
 }

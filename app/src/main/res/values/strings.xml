@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">avito-winter-android-app</string>
+    <string name="app_name">AvitoWinterAndroidApp</string>
+    <string name="menu_home">Главная</string>
+    <string name="menu_loaded_tracks">Сохраненные</string>
 </resources>

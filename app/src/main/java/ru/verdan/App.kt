@@ -11,14 +11,16 @@ class App : BaseApplication() {
 
     @Inject lateinit var dependencyProvider: ComponentDependencyProvider
 
-    private lateinit var appComponent: AppComponent
+    lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.factory().create(this)
+        appComponent = DaggerAppComponent.factory()
+            .create(this)
+        appComponent.inject(this)
     }
 
-    override fun <T : ComponentDependencies> getDependencies(key: Class<T>): T {
+    override fun <T : ComponentDependencies> getDependencies(key: Class<out T>): T {
         return dependencyProvider.provide(key)
     }
 }
