@@ -1,18 +1,13 @@
 package ru.verdan.presentation
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import dev.androidbroadcast.vbpd.viewBinding
 import ru.verdan.App
 import ru.verdan.R
 import ru.verdan.common.base.BaseActivity
 import ru.verdan.databinding.ActivityMainBinding
-import ru.verdan.di.DaggerAppComponent
 import ru.verdan.navigation.Navigator
 import ru.verdan.navigation.di.Root
 import javax.inject.Inject
