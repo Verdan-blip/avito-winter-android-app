@@ -6,7 +6,7 @@ import ru.verdan.feature.home.domain.entity.Track
 
 interface TrackRepository {
 
-    fun getChartTracks(): List<Track>
+    suspend fun getChartTracks(): List<Track>
 
-    fun searchByName(name: String): Flow<PagingData<Track>>
+    suspend fun searchByName(name: String): Flow<PagingData<Track>>
 }

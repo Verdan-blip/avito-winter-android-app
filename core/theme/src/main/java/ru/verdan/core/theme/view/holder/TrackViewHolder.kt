@@ -1,4 +1,4 @@
-package ru.verdan.core.theme.view.recycler
+package ru.verdan.core.theme.view.holder
 
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import coil3.load
@@ -9,8 +9,17 @@ import ru.verdan.core.theme.databinding.TrackItemBinding
 import ru.verdan.core.theme.entity.TrackModel
 
 class TrackViewHolder(
-    private val viewBinding: TrackItemBinding
+    private val viewBinding: TrackItemBinding,
+    private val onTrackClick: (TrackModel) -> Unit
 ) : ViewHolder(viewBinding.root) {
+
+    private var currentTrackModel: TrackModel? = null
+
+    init {
+        viewBinding.apply {
+            root.setOnClickListener { currentTrackModel?.also(onTrackClick) }
+        }
+    }
 
     fun bind(track: TrackModel) {
         track.apply {
@@ -23,5 +32,6 @@ class TrackViewHolder(
                 }
             }
         }
+        currentTrackModel = track
     }
 }

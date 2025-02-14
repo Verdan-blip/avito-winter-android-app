@@ -7,8 +7,8 @@ internal fun TrackDto.toTrackEntity(): TrackEntity =
     TrackEntity(
         id = id,
         title = title,
-        artist = artist,
-        coverUrl = preview
+        artist = artist.name,
+        coverUrl = album.coverUrl
     )
 
 internal fun List<TrackDto>.toTrackEntityList(): List<TrackEntity> =

@@ -22,4 +22,7 @@ dependencies {
     implementation(project(":core:network-impl"))
     implementation(project(":core:player-api"))
     implementation(project(":core:player-impl"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:loaded-tracks"))
+    implementation(project(":feature:track-player"))
 }

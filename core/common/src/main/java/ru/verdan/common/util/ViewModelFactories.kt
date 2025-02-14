@@ -4,6 +4,6 @@ import androidx.lifecycle.ViewModel
 import javax.inject.Provider
 
 
-typealias ViewModelFactories = Map<
+typealias ViewModelProviders = Map<
         Class<out ViewModel>,
         @JvmSuppressWildcards Provider<ViewModel>>

@@ -3,13 +3,14 @@ package ru.verdan.feature.home.domain.di
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import ru.verdan.common.di.module.IODispatcher
 import ru.verdan.feature.home.domain.repository.TrackRepository
 import ru.verdan.feature.home.domain.usecase.GetChartTracksUseCase
 import ru.verdan.feature.home.domain.usecase.SearchTrackByNameUseCase
 
 @Module
-internal interface HomeDomainModule {
+internal class HomeDomainModule {
 
     @Provides
     fun provideGetChartsUseCase(

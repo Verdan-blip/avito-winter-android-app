@@ -1,15 +1,17 @@
 package ru.verdan.feature.home.presentation.di
 
+import androidx.lifecycle.ViewModel
+import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import ru.verdan.common.base.BaseViewModel
 import ru.verdan.common.di.key.ViewModelKey
+import ru.verdan.common.di.scopes.FeatureScope
 import ru.verdan.feature.home.presentation.HomeViewModel
 
 @Module
 internal interface HomePresentationModule {
 
-    @IntoMap
-    @ViewModelKey(HomeViewModel::class)
-    fun provideViewModel(homeViewModel: HomeViewModel): BaseViewModel
+    @FeatureScope
+    @[Binds IntoMap ViewModelKey(HomeViewModel::class)]
+    fun bindsViewModel(homeViewModel: HomeViewModel): ViewModel
 }

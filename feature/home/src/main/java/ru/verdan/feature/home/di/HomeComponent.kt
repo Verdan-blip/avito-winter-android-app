@@ -3,6 +3,7 @@ package ru.verdan.feature.home.di
 import dagger.Component
 import ru.verdan.common.di.component.BaseComponent
 import ru.verdan.common.di.scopes.FeatureScope
+import ru.verdan.feature.home.presentation.HomeFragment
 
 @FeatureScope
 @Component(
@@ -11,11 +12,11 @@ import ru.verdan.common.di.scopes.FeatureScope
 )
 interface HomeComponent : BaseComponent {
 
+    fun inject(fragment: HomeFragment)
+
     @Component.Factory
     interface Factory {
 
-        fun create(
-            dependencies: HomeComponentDependencies
-        ): HomeComponent
+        fun create(dependencies: HomeComponentDependencies): HomeComponent
     }
 }

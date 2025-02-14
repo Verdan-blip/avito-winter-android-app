@@ -4,5 +4,5 @@ import ru.verdan.common.base.BaseViewModel
 
 interface BaseComponent {
 
-    val viewModelFactory: BaseViewModel.Companion.BaseFactory
+    val viewModelFactory: BaseViewModel.Companion.Factory
 }

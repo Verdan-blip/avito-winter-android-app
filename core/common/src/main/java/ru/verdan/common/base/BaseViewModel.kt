@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import ru.verdan.common.R
 import ru.verdan.common.base.mvvm.BaseEvent
 import ru.verdan.common.resource.ResourceProvider
-import ru.verdan.common.util.ViewModelFactories
+import ru.verdan.common.util.ViewModelProviders
 import javax.inject.Inject
 
 abstract class BaseViewModel(
@@ -46,13 +46,13 @@ abstract class BaseViewModel(
 
     companion object {
 
-        class BaseFactory @Inject constructor(
-            private val viewModelFactories: ViewModelFactories
+        class Factory @Inject constructor(
+            private val viewModelProviders: ViewModelProviders
         ) : ViewModelProvider.Factory {
 
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return viewModelFactories.getValue(modelClass).get() as T
+                return viewModelProviders.getValue(modelClass).get() as T
             }
         }
     }

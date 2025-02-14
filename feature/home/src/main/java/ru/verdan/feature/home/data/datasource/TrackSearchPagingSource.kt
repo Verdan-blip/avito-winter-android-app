@@ -1,5 +1,6 @@
 package ru.verdan.feature.home.data.datasource
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import dagger.assisted.Assisted
@@ -36,6 +37,7 @@ internal class TrackSearchPagingSource @AssistedInject constructor(
                 nextKey = if (index < limit) index + step else null
             )
         } catch (e: Exception) {
+            Log.d("ERROR", e.toString())
             LoadResult.Error(e)
         }
     }

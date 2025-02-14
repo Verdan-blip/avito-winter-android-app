@@ -1,4 +1,4 @@
-package ru.verdan.core.theme.view.recycler
+package ru.verdan.core.theme.view.diffutil
 
 import androidx.recyclerview.widget.DiffUtil
 import ru.verdan.core.theme.entity.TrackModel

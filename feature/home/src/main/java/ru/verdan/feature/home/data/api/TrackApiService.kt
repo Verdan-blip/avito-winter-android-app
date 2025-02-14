@@ -8,10 +8,10 @@ import ru.verdan.feature.home.data.dto.SearchDto
 internal interface TrackApiService {
 
     @GET("/chart")
-    fun getChartTracks(): ChartDto
+    suspend fun getChartTracks(): ChartDto
 
     @GET("/search")
-    fun searchTrackByName(
+    suspend fun searchTrackByName(
         @Query("q") name: String,
         @Query("index") index: Int = 0
     ): SearchDto

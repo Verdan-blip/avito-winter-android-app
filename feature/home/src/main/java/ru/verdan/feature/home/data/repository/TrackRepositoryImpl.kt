@@ -22,12 +22,12 @@ internal class TrackRepositoryImpl @Inject constructor(
     private val trackSearchPagingSourceFactory: TrackSearchPagingSource.Companion.Factory
 ) : TrackRepository {
 
-    override fun getChartTracks(): List<Track> {
+    override suspend fun getChartTracks(): List<Track> {
         return trackChartDataSource.getChartTracks()
             .toTrackList()
     }
 
-    override fun searchByName(name: String): Flow<PagingData<Track>> {
+    override suspend fun searchByName(name: String): Flow<PagingData<Track>> {
         return Pager(
             config = PagingConfig(pageSize = DeezerApiConfig.PAGING_STEP),
             pagingSourceFactory = {

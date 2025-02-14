@@ -9,7 +9,7 @@ internal class TrackChartsDataSource @Inject constructor(
     private val trackApiService: TrackApiService
 ) {
 
-    fun getChartTracks(): List<TrackEntity> {
+    suspend fun getChartTracks(): List<TrackEntity> {
         return trackApiService.getChartTracks()
             .tracksData
             .tracks
