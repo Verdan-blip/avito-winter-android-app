@@ -9,14 +9,12 @@ import ru.verdan.feature.di.FeatureDependenciesModule
 import ru.verdan.local.impl.di.LocalModule
 import ru.verdan.navigation.di.NavigationModule
 import ru.verdan.network.impl.di.NetworkModule
-import ru.verdan.player.impl.di.PlayerModule
 
 @Module(
     includes = [
         CommonModule::class,
         LocalModule::class,
         NetworkModule::class,
-        PlayerModule::class,
         NavigationModule::class,
         FeatureDependenciesModule::class
     ]

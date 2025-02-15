@@ -19,15 +19,14 @@ import ru.verdan.feature.home.R
 import ru.verdan.feature.home.databinding.FragmentHomeBinding
 import ru.verdan.feature.home.di.HomeComponentHolder
 
-class HomeFragment : BaseFragment<FragmentHomeBinding, HomeComponentHolder>(
-    id = R.layout.fragment_home,
-    componentHolder = HomeComponentHolder
+class HomeFragment : BaseFragment<FragmentHomeBinding>(
+    id = R.layout.fragment_home
 ) {
     override val viewBinding by viewBinding(FragmentHomeBinding::bind)
     
     private val viewModel by viewModels<HomeViewModel> {
         HomeComponentHolder
-            .create(requireContext())
+            .get(requireContext())
             .viewModelFactory
     }
 

@@ -3,18 +3,14 @@ package ru.verdan.presentation
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import dev.androidbroadcast.vbpd.viewBinding
 import ru.verdan.App
 import ru.verdan.R
 import ru.verdan.common.base.BaseActivity
-import ru.verdan.databinding.ActivityMainBinding
 import ru.verdan.navigation.Navigator
 import ru.verdan.navigation.di.Root
 import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
-
-    private val viewBinding by viewBinding(ActivityMainBinding::bind)
 
     @Inject @Root lateinit var navigator: Navigator
 

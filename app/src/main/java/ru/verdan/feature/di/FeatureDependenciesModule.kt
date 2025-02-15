@@ -8,14 +8,20 @@ import ru.verdan.common.di.key.ComponentDependenciesKey
 import ru.verdan.di.AppComponent
 import ru.verdan.feature.home.di.HomeComponentDependencies
 import ru.verdan.feature.home.di.HomeDependenciesModule
+import ru.verdan.feature.player.di.TrackPlayerDependenciesModule
+import ru.verdan.feature.trackplayer.di.TrackPlayerDependencies
 
 @Module(
     includes = [
-        HomeDependenciesModule::class
+        HomeDependenciesModule::class,
+        TrackPlayerDependenciesModule::class
     ]
 )
 interface FeatureDependenciesModule {
 
     @[Binds IntoMap ComponentDependenciesKey(HomeComponentDependencies::class)]
     fun bindsHomeDependencies(appComponent: AppComponent): ComponentDependencies
+
+    @[Binds IntoMap ComponentDependenciesKey(TrackPlayerDependencies::class)]
+    fun bindsTrackPlayerDependencies(appComponent: AppComponent): ComponentDependencies
 }
