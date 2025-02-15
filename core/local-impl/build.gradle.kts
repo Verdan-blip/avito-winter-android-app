@@ -9,6 +9,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:common"))
+    implementation(project(":core:local-api"))
     implementation(libs.bundles.room)
     ksp(libs.room.compiler)
 }

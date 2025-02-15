@@ -30,5 +30,6 @@ fun MediaItem.toTrackModel(): TrackModel {
         coverUrl = mediaMetadata.artworkUri?.toString(),
         artist = mediaMetadata.artist?.toString()
             ?: throw IllegalStateException("Artist has not been provided"),
+        isSaved = false
     )
 }

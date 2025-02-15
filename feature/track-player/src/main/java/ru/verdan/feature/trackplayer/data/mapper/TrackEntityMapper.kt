@@ -10,5 +10,6 @@ internal fun TrackEntity.toTrack(): Track =
         albumTitle = albumTitle,
         artist = artist,
         coverUrl = coverUrl,
-        audioUrl = audioUrl
+        audioUrl = audioUrl,
+        isSaved = false
     )

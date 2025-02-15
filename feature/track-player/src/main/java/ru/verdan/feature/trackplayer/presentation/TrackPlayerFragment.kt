@@ -1,8 +1,10 @@
 package ru.verdan.feature.trackplayer.presentation
 
+import android.app.DownloadManager
+import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import coil3.load
@@ -16,6 +18,7 @@ import ru.verdan.feature.loaded.R
 import ru.verdan.feature.loaded.databinding.FragmentTrackPlayerBinding
 import ru.verdan.feature.trackplayer.di.TrackPlayerComponentHolder
 import ru.verdan.feature.trackplayer.presentation.entity.TrackModel
+import ru.verdan.feature.trackplayer.presentation.receiver.DownloadCompletionReceiver
 
 class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
     id = R.layout.fragment_track_player
@@ -31,8 +34,18 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
             .create(queueTrackIds)
     }
 
+    private val receiver = DownloadCompletionReceiver { id, uri ->
+        viewModel.onDownloadFinished(id, uri.toString())
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ContextCompat.registerReceiver(
+            requireContext(),
+            receiver,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+            ContextCompat.RECEIVER_EXPORTED
+        )
         extractQueueTrackIds()
     }
 
@@ -44,12 +57,18 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
             ibPlayPause.setOnClickListener { viewModel.onPlayPause() }
             ibPrev.setOnClickListener { viewModel.onPlayPrevious() }
             ibNext.setOnClickListener { viewModel.onPlayNext() }
+            ibDownload.setOnClickListener { viewModel.onDownloadTrack() }
             sbProgress.setOnSeekBarChangeListener(
                 onStartTrackingTouch = { progress -> viewModel.onProgressChange(progress) },
                 onStopTrackingTouch = { viewModel.onProgressChanged() }
             )
             collectViewModelStates()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        requireContext().unregisterReceiver(receiver)
     }
 
     private fun extractQueueTrackIds() {
@@ -70,6 +89,7 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
                 tvTitle.text = title
                 tvArtist.text = artist
                 tvAlbum.text = albumTitle
+                ibDownload.isVisible = !isSaved
             }
         }
     }

@@ -10,5 +10,17 @@ internal fun Track.toTrackModel(): TrackModel =
         audioUrl = audioUrl,
         albumTitle = albumTitle,
         coverUrl = coverUrl,
-        artist = artist
+        artist = artist,
+        isSaved = isSaved
+    )
+
+internal fun TrackModel.toTrack(): Track =
+    Track(
+        id = id,
+        title = title,
+        audioUrl = audioUrl,
+        albumTitle = albumTitle,
+        coverUrl = coverUrl,
+        artist = artist,
+        isSaved = isSaved
     )

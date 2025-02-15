@@ -6,5 +6,6 @@ data class TrackModel(
     val albumTitle: String?,
     val artist: String,
     val coverUrl: String?,
-    val audioUrl: String
+    val audioUrl: String,
+    val isSaved: Boolean
 )

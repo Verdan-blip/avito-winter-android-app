@@ -1,6 +1,5 @@
 package ru.verdan.feature.trackplayer.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -16,8 +15,11 @@ import ru.verdan.common.resource.ResourceProvider
 import ru.verdan.common.util.millisToMmSsString
 import ru.verdan.common.util.progressToTime
 import ru.verdan.common.util.timeToProgress
+import ru.verdan.feature.trackplayer.domain.usecase.DownloadTrackUseCase
 import ru.verdan.feature.trackplayer.domain.usecase.GetTrackUseCase
+import ru.verdan.feature.trackplayer.domain.usecase.SaveDownloadedTrackUseCase
 import ru.verdan.feature.trackplayer.presentation.entity.TrackModel
+import ru.verdan.feature.trackplayer.presentation.mapper.toTrack
 import ru.verdan.feature.trackplayer.presentation.mapper.toTrackModel
 import ru.verdan.feature.trackplayer.presentation.service.controller.Controller
 
@@ -25,6 +27,8 @@ class TrackPlayerViewModel @AssistedInject constructor(
     @Assisted("queueTrackIds") private val queueTrackIds: List<Long>,
     private val controller: Controller,
     private val getTrackUseCase: GetTrackUseCase,
+    private val downloadTrackUseCase: DownloadTrackUseCase,
+    private val saveDownloadedTrackUseCase: SaveDownloadedTrackUseCase,
     resourceProvider: ResourceProvider
 ) : BaseViewModel(resourceProvider) {
 
@@ -52,6 +56,7 @@ class TrackPlayerViewModel @AssistedInject constructor(
     private var shouldTrackProgress: Boolean = true
 
     private var index: Int = 0
+    private val downloadsMap: MutableMap<Long, TrackModel> = mutableMapOf()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -107,7 +112,6 @@ class TrackPlayerViewModel @AssistedInject constructor(
     }
 
     fun onProgressChange(progress: Int) {
-        Log.d("ERROR", progress.toString())
         shouldTrackProgress = false
         _currentProgress.value = progress
         _currentTimeProgress.value = progress
@@ -120,6 +124,24 @@ class TrackPlayerViewModel @AssistedInject constructor(
         controller.seekTo(_currentProgress.value
             .progressToTime(controller.state.value.duration)
         )
+    }
+
+    fun onDownloadTrack() {
+        viewModelScope.launch {
+            _currentTrack.value?.also { track ->
+                val downloadId = downloadTrackUseCase(track.toTrack())
+                downloadsMap[downloadId] = track
+            }
+        }
+    }
+
+    fun onDownloadFinished(id: Long, localUri: String) {
+        viewModelScope.launch {
+            downloadsMap.remove(id)?.also { track ->
+                saveDownloadedTrackUseCase(track.copy(audioUrl = localUri).toTrack())
+                _currentTrack.value = _currentTrack.value?.copy(isSaved = true)
+            }
+        }
     }
 
     private suspend fun fetchTrack(id: Long): TrackModel {
@@ -137,13 +159,20 @@ class TrackPlayerViewModel @AssistedInject constructor(
             @Assisted("queueTrackIds") private val queueTrackIds: List<Long>,
             private val controller: Controller,
             private val getTrackUseCase: GetTrackUseCase,
+            private val downloadTrackUseCase: DownloadTrackUseCase,
+            private val saveDownloadedTrackUseCase: SaveDownloadedTrackUseCase,
             private val resourceProvider: ResourceProvider
         ) : ViewModelProvider.Factory {
 
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return TrackPlayerViewModel(
-                    queueTrackIds, controller, getTrackUseCase, resourceProvider
+                    queueTrackIds = queueTrackIds,
+                    controller = controller,
+                    getTrackUseCase = getTrackUseCase,
+                    downloadTrackUseCase = downloadTrackUseCase,
+                    saveDownloadedTrackUseCase = saveDownloadedTrackUseCase,
+                    resourceProvider = resourceProvider
                 ) as T
             }
 
