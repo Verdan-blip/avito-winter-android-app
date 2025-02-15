@@ -1,6 +1,7 @@
 plugins {
     id("base.app.dependencies")
     id("base.app.config")
+    alias(libs.plugins.android.navigation.safeargs)
 }
 
 android {
@@ -25,4 +26,5 @@ dependencies {
     implementation(project(":feature:home"))
     implementation(project(":feature:loaded-tracks"))
     implementation(project(":feature:track-player"))
+    implementation(libs.bundles.exoplayer)
 }

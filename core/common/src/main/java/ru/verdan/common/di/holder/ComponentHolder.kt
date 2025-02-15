@@ -1,10 +1,10 @@
 package ru.verdan.common.di.holder
 
 import android.content.Context
-import ru.verdan.common.di.component.BaseComponent
+import ru.verdan.common.di.component.DiComponent
 import ru.verdan.common.di.container.ComponentDependenciesContainer
 
-abstract class ComponentHolder<T : BaseComponent> {
+abstract class ComponentHolder<T : DiComponent> {
 
     private var component: T? = null
 

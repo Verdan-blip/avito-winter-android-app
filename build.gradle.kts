@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.android.navigation.safeargs) apply false
     id("base.app.config") apply false
     id("base.app.dependencies") apply false
     id("base.feature.config") apply false

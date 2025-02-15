@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_graph"
     app:startDestination="@id/bottomNavigationFragment">
 
+    <action
+        android:id="@+id/action_global_trackPlayerFragment"
+        app:destination="@id/trackPlayerFragment" />
+
     <fragment
         android:id="@+id/bottomNavigationFragment"
         tools:layout="@layout/fragment_bottom_navigation"
         android:name="ru.verdan.presentation.BottomNavigationFragment"
-        android:label="BottomNavigationFragment" />
+        android:label="BottomNavigationFragment" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/trackPlayerFragment"
+        tools:layout="@layout/fragment_track_player"
+        android:name="ru.verdan.feature.trackplayer.presentation.TrackPlayerFragment"
+        android:label="TrackPlayerFragment" >
+        <argument
+            android:name="queue_track_ids"
+            app:argType="long[]" />
+    </fragment>
 </navigation>

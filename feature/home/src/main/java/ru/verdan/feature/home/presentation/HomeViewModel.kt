@@ -63,7 +63,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onTrackClick(trackModel: TrackModel) {
-        homeRouter.navigateToPlayer()
+        homeRouter.navigateToPlayer(listOf(trackModel).map { it.id })
     }
 
     private suspend fun collectFoundTracks(flow: Flow<PagingData<Track>>) {

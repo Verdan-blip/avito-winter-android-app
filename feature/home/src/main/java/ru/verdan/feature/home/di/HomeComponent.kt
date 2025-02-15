@@ -17,6 +17,8 @@ interface HomeComponent : BaseComponent {
     @Component.Factory
     interface Factory {
 
-        fun create(dependencies: HomeComponentDependencies): HomeComponent
+        fun create(
+            dependencies: HomeComponentDependencies
+        ): HomeComponent
     }
 }
