@@ -1,6 +1,7 @@
 package ru.verdan.feature.trackplayer.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -16,23 +17,28 @@ import ru.verdan.feature.loaded.databinding.FragmentTrackPlayerBinding
 import ru.verdan.feature.trackplayer.di.TrackPlayerComponentHolder
 import ru.verdan.feature.trackplayer.presentation.entity.TrackModel
 
-class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayerComponentHolder>(
-    id = R.layout.fragment_track_player,
-    componentHolder = TrackPlayerComponentHolder
+class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
+    id = R.layout.fragment_track_player
 ) {
     override val viewBinding by viewBinding(FragmentTrackPlayerBinding::bind)
 
-    val trackPlayerArgs
+    private var queueTrackIds: List<Long> = listOf()
 
     private val viewModel by viewModels<TrackPlayerViewModel> {
         TrackPlayerComponentHolder
             .create(requireContext())
             .factoryOfViewFactory
-            .create(listOf())
+            .create(queueTrackIds)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        extractQueueTrackIds()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.onLaunch()
         viewBinding.apply {
             ivCover.setImageResource(ru.verdan.core.theme.R.drawable.image_placeholder)
             ibPlayPause.setOnClickListener { viewModel.onPlayPause() }
@@ -46,6 +52,14 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
         }
     }
 
+    private fun extractQueueTrackIds() {
+        arguments?.apply {
+            getLongArray(KEY_QUEUE_TRACK_IDS)?.also { ids ->
+                queueTrackIds = ids.toList()
+            }
+        }
+    }
+
     private fun onCollectCurrentTrack(track: TrackModel?) {
         viewBinding.apply {
             track?.apply {
@@ -55,8 +69,18 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
                 }
                 tvTitle.text = title
                 tvArtist.text = artist
+                tvAlbum.text = albumTitle
             }
         }
+    }
+
+    private fun onCollectIsPlaying(isPlaying: Boolean) {
+        viewBinding.ibPlayPause.setImageResource(
+            if (isPlaying)
+                R.drawable.ic_pause_24
+            else
+                R.drawable.ic_play_24
+        )
     }
 
     private fun onCollectCanPlayNext(canPlayNext: Boolean) {
@@ -65,6 +89,10 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
 
     private fun onCollectCanPlayPrevious(canPlayNext: Boolean) {
         viewBinding.ibPrev.isVisible = canPlayNext
+    }
+
+    private fun onCollectCurrentTimeDuration(timeProgress: String) {
+        viewBinding.tvDuration.text = timeProgress
     }
 
     private fun onCollectCurrentTimeProgress(timeProgress: String) {
@@ -79,6 +107,9 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
         viewModel.currentTrack.collectWithLifecycle(
             viewLifecycleOwner, ::onCollectCurrentTrack
         )
+        viewModel.isPlaying.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectIsPlaying
+        )
         viewModel.canPlayPrevious.collectWithLifecycle(
             viewLifecycleOwner, ::onCollectCanPlayNext
         )
@@ -91,5 +122,13 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
         viewModel.currentProgress.collectWithLifecycle(
             viewLifecycleOwner, ::onCollectCurrentProgress
         )
+        viewModel.currentTimeDuration.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectCurrentTimeDuration
+        )
+    }
+
+    companion object {
+
+        const val KEY_QUEUE_TRACK_IDS = "queue_track_ids"
     }
 }

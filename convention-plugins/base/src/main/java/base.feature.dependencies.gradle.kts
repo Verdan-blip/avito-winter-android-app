@@ -21,7 +21,6 @@ dependencies {
     implementation(project(":core:theme"))
     implementation(project(":core:local-api"))
     implementation(project(":core:network-api"))
-    implementation(project(":core:player-api"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

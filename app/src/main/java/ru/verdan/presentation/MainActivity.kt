@@ -14,8 +14,6 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity() {
 
-    private val viewBinding by viewBinding(ActivityMainBinding::bind)
-
     @Inject @Root lateinit var navigator: Navigator
 
     private var navController: NavController? = null

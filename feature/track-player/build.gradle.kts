@@ -13,4 +13,5 @@ android {
 dependencies {
     implementation(libs.bundles.exoplayer)
     implementation(libs.bundles.network)
+    implementation(libs.bundles.coroutines)
 }

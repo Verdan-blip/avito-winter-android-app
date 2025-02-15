@@ -9,5 +9,5 @@ internal class TrackDto(
     @SerialName("title") val title: String,
     @SerialName("album") val album: AlbumDto,
     @SerialName("artist") val artist: ArtistDto,
-    @SerialName("link") val audioUrl: String
+    @SerialName("preview") val audioUrl: String
 )

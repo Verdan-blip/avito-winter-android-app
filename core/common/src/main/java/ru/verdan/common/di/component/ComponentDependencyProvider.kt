@@ -1,5 +1,6 @@
 package ru.verdan.common.di.component
 
+import android.util.Log
 import javax.inject.Inject
 
 typealias DependenciesMap = Map<

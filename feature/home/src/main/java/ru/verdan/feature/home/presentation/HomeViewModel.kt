@@ -2,6 +2,7 @@ package ru.verdan.feature.home.presentation
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.paging.map
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +57,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _showFoundTracksProgressBar.value = true
             val chartTracksFlow = searchTrackByNameUseCase(_query.value)
+                .cachedIn(viewModelScope)
             launch(Dispatchers.IO) {
                 collectFoundTracks(chartTracksFlow)
             }

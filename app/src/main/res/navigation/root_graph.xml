@@ -14,16 +14,13 @@
         android:id="@+id/bottomNavigationFragment"
         tools:layout="@layout/fragment_bottom_navigation"
         android:name="ru.verdan.presentation.BottomNavigationFragment"
-        android:label="BottomNavigationFragment" >
+        android:label="BottomNavigationFragment">
     </fragment>
 
     <fragment
         android:id="@+id/trackPlayerFragment"
         tools:layout="@layout/fragment_track_player"
         android:name="ru.verdan.feature.trackplayer.presentation.TrackPlayerFragment"
-        android:label="TrackPlayerFragment" >
-        <argument
-            android:name="queue_track_ids"
-            app:argType="long[]" />
+        android:label="TrackPlayerFragment">
     </fragment>
 </navigation>

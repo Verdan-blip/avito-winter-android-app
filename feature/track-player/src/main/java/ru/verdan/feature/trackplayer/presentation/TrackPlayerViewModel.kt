@@ -1,16 +1,15 @@
 package ru.verdan.feature.trackplayer.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.verdan.common.base.BaseViewModel
 import ru.verdan.common.resource.ResourceProvider
@@ -19,9 +18,8 @@ import ru.verdan.common.util.progressToTime
 import ru.verdan.common.util.timeToProgress
 import ru.verdan.feature.trackplayer.domain.usecase.GetTrackUseCase
 import ru.verdan.feature.trackplayer.presentation.entity.TrackModel
-import ru.verdan.feature.trackplayer.presentation.mapper.toPlayableItem
 import ru.verdan.feature.trackplayer.presentation.mapper.toTrackModel
-import ru.verdan.player.controller.Controller
+import ru.verdan.feature.trackplayer.presentation.service.controller.Controller
 
 class TrackPlayerViewModel @AssistedInject constructor(
     @Assisted("queueTrackIds") private val queueTrackIds: List<Long>,
@@ -30,15 +28,8 @@ class TrackPlayerViewModel @AssistedInject constructor(
     resourceProvider: ResourceProvider
 ) : BaseViewModel(resourceProvider) {
 
-    val currentTrack: StateFlow<TrackModel?> get() = controller.state
-        .map { state ->
-            _isPLaying.value = state.isPlaying
-            _currentProgress.value = state.positionMs.timeToProgress(state.duration)
-            _currentTimeProgress.value = state.positionMs.millisToMmSsString()
-            state
-        }
-        .map { it.currentPlayable?.toTrackModel() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    private val _currentTrack = MutableStateFlow<TrackModel?>(null)
+    val currentTrack: StateFlow<TrackModel?> get() = _currentTrack
 
     private val _isPLaying = MutableStateFlow(false)
     val isPlaying: StateFlow<Boolean> get() = _isPLaying
@@ -49,13 +40,41 @@ class TrackPlayerViewModel @AssistedInject constructor(
     private val _currentTimeProgress = MutableStateFlow(0L.millisToMmSsString())
     val currentTimeProgress: StateFlow<String> get() = _currentTimeProgress
 
+    private val _currentTimeDuration = MutableStateFlow(0L.millisToMmSsString())
+    val currentTimeDuration: StateFlow<String> get() = _currentTimeDuration
+
     private val _canPlayPrevious = MutableStateFlow(true)
     val canPlayPrevious: StateFlow<Boolean> get() = _canPlayPrevious
 
     private val _canPlayNext = MutableStateFlow(true)
     val canPlayNext: StateFlow<Boolean> get() = _canPlayNext
 
+    private var shouldTrackProgress: Boolean = true
+
     private var index: Int = 0
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            controller.state.collect { state ->
+                _currentTrack.value = state.currentPlayable
+                if (shouldTrackProgress) {
+                    _isPLaying.value = state.isPlaying
+                    _currentTimeDuration.value = state.duration.millisToMmSsString()
+                    _currentProgress.value = state.positionMs.timeToProgress(state.duration)
+                    _currentTimeProgress.value = state.positionMs.millisToMmSsString()
+                }
+            }
+        }
+    }
+
+    fun onLaunch() {
+        viewModelScope.launch {
+            if (controller.state.value.currentPlayable == null) {
+                val track = fetchTrack(queueTrackIds[index])
+                controller.play(track)
+            }
+        }
+    }
 
     fun onPlayPause() {
         if (controller.state.value.isPlaying) {
@@ -88,6 +107,8 @@ class TrackPlayerViewModel @AssistedInject constructor(
     }
 
     fun onProgressChange(progress: Int) {
+        Log.d("ERROR", progress.toString())
+        shouldTrackProgress = false
         _currentProgress.value = progress
         _currentTimeProgress.value = progress
             .progressToTime(controller.state.value.duration)
@@ -95,6 +116,7 @@ class TrackPlayerViewModel @AssistedInject constructor(
     }
 
     fun onProgressChanged() {
+        shouldTrackProgress = true
         controller.seekTo(_currentProgress.value
             .progressToTime(controller.state.value.duration)
         )
@@ -106,11 +128,10 @@ class TrackPlayerViewModel @AssistedInject constructor(
 
     private suspend fun play(id: Long) {
         val track = fetchTrack(id)
-        controller.play(track.toPlayableItem())
+        controller.play(track)
     }
 
     companion object {
-
 
         class Factory @AssistedInject constructor(
             @Assisted("queueTrackIds") private val queueTrackIds: List<Long>,
