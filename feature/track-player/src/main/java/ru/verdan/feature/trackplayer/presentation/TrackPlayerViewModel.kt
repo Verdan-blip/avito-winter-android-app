@@ -144,6 +144,7 @@ class TrackPlayerViewModel @AssistedInject constructor(
         val startIndex = ids.indexOf(selectedTrackId)
         var i = startIndex + 1
         while (i < ids.size) {
+            _canPlayNext.value = true
             val track = fetchTrack(ids[i])
             controller.add(track)
             i++

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="enter_to_search">Введите, чтобы начать поиск</string>
+    <string name="empty">Пусто</string>
 </resources>

@@ -5,6 +5,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.search.SearchView
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.launch
 import ru.verdan.common.base.BaseFragment
@@ -83,6 +84,17 @@ class LoadedTracksFragment : BaseFragment<FragmentLoadedTracksBinding, LoadedTra
         svQuery.editText.onTextChange { text ->
             viewModel.onQueryChange(text)
         }
+        svQuery.addTransitionListener { _, _, newState ->
+            when (newState) {
+                SearchView.TransitionState.SHOWN -> {
+                    rvLoadedTracks.isVisible = false
+                }
+                SearchView.TransitionState.HIDDEN -> {
+                    rvLoadedTracks.isVisible = true
+                }
+                else -> Unit
+            }
+        }
         svQuery.editText.setOnEditorActionListener { _, _, _ ->
             viewModel.onQuerySubmit()
             true
@@ -105,6 +117,9 @@ class LoadedTracksFragment : BaseFragment<FragmentLoadedTracksBinding, LoadedTra
 
     private fun onCollectTracks(tracks: List<TrackModel>?) {
         chartTracksAdapter.submitList(tracks)
+        viewBinding.apply {
+            tvEmpty.isVisible = tracks?.isEmpty() == true
+        }
     }
 
     private fun onCollectFoundTracks(tracks: List<TrackModel>?) {

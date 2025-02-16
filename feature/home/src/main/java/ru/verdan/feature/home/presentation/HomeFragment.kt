@@ -1,12 +1,12 @@
 package ru.verdan.feature.home.presentation
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingData
+import com.google.android.material.search.SearchView
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.launch
 import ru.verdan.common.base.BaseFragment
@@ -73,9 +73,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
     private fun FragmentHomeBinding.setupSearchView() {
         svQuery.editText.setText(viewModel.query.value)
-        svQuery.editText.onTextChange { text ->
-            viewModel.onQueryChange(text)
+        svQuery.addTransitionListener { _, _, newState ->
+            when (newState) {
+                SearchView.TransitionState.SHOWN -> {
+                    rvChartTracks.isVisible = false
+                }
+                SearchView.TransitionState.HIDDEN -> {
+                    rvChartTracks.isVisible = true
+                }
+                else -> Unit
+            }
         }
+        svQuery.editText.onTextChange { text -> viewModel.onQueryChange(text) }
         svQuery.editText.setOnEditorActionListener { _, _, _ ->
             viewModel.onQuerySubmit()
             true
@@ -84,7 +93,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
     private fun onCollectChartTracksProgressVisibility(isVisible: Boolean) {
         viewBinding.apply {
-            Log.d("ERROR", isVisible.toString())
             progressChartTracks.root.isVisible = isVisible
             rvChartTracks.isVisible = !isVisible
         }
