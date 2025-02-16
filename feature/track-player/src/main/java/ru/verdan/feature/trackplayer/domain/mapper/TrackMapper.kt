@@ -13,7 +13,7 @@ fun Track.toTrackEntity(): TrackEntity =
         audioUrl = audioUrl
     )
 
-fun TrackEntity.toTrack(): Track =
+fun TrackEntity.toTrack(isSaved: Boolean = true): Track =
     Track(
         id = id,
         title = title,
@@ -21,5 +21,5 @@ fun TrackEntity.toTrack(): Track =
         artist = artist,
         coverUrl = coverUrl,
         audioUrl = audioUrl,
-        isSaved = true
+        isSaved = isSaved
     )

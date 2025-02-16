@@ -3,7 +3,7 @@ package ru.verdan.feature.trackplayer.data.mapper
 import ru.verdan.feature.trackplayer.data.entity.TrackEntity
 import ru.verdan.feature.trackplayer.domain.entity.Track
 
-internal fun TrackEntity.toTrack(): Track =
+internal fun TrackEntity.toTrack(isSaved: Boolean): Track =
     Track(
         id = id,
         title = title,
@@ -11,5 +11,5 @@ internal fun TrackEntity.toTrack(): Track =
         artist = artist,
         coverUrl = coverUrl,
         audioUrl = audioUrl,
-        isSaved = false
+        isSaved = isSaved
     )

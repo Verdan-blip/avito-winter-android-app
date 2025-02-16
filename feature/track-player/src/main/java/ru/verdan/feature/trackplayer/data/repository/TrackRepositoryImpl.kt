@@ -8,11 +8,12 @@ import ru.verdan.feature.trackplayer.domain.repository.TrackRepository
 
 internal class TrackRepositoryImpl(
     private val dataSource: TrackDataSource,
-    private val trackRepository: ru.verdan.local.api.repository.TrackRepository
+    private val trackLocalRepository: ru.verdan.local.api.repository.TrackLocalRepository
 ) : TrackRepository {
 
     override suspend fun getTrackById(id: Long): Track {
-        val localTrack = trackRepository.getById(id)
-        return localTrack?.toTrack() ?: dataSource.getTrackById(id).toTrack()
+        val localTrack = trackLocalRepository.getById(id)
+        return localTrack?.toTrack(isSaved = true)
+            ?: dataSource.getTrackById(id).toTrack(isSaved = false)
     }
 }

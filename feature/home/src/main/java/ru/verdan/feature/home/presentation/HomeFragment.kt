@@ -19,12 +19,12 @@ import ru.verdan.feature.home.R
 import ru.verdan.feature.home.databinding.FragmentHomeBinding
 import ru.verdan.feature.home.di.HomeComponentHolder
 
-class HomeFragment : BaseFragment<FragmentHomeBinding>(
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     id = R.layout.fragment_home
 ) {
     override val viewBinding by viewBinding(FragmentHomeBinding::bind)
     
-    private val viewModel by viewModels<HomeViewModel> {
+    override val viewModel by viewModels<HomeViewModel> {
         HomeComponentHolder
             .get(requireContext())
             .viewModelFactory
@@ -55,18 +55,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             setupChartTracksRecyclerView()
             setupFoundTracksRecyclerView()
             setupSearchView()
-            viewModel.chartTracks.collectWithLifecycle(
-                viewLifecycleOwner, ::onCollectChartTracks
-            )
-            viewModel.foundTracks.collectWithLifecycle(
-                viewLifecycleOwner, ::onCollectFoundTracks
-            )
-            viewModel.showChartTracksProgressBar.collectWithLifecycle(
-                viewLifecycleOwner, ::onCollectChartTracksProgressVisibility
-            )
-            viewModel.showFoundTracksProgressBar.collectWithLifecycle(
-                viewLifecycleOwner, ::onCollectFoundTracksProgressVisibility
-            )
+            collectBaseEvents()
+            collectStates()
         }
     }
 
@@ -113,5 +103,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         lifecycleScope.launch {
             foundTracksAdapter.submitData(tracks)
         }
+    }
+
+    private fun collectStates() {
+        viewModel.chartTracks.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectChartTracks
+        )
+        viewModel.foundTracks.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectFoundTracks
+        )
+        viewModel.showChartTracksProgressBar.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectChartTracksProgressVisibility
+        )
+        viewModel.showFoundTracksProgressBar.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectFoundTracksProgressVisibility
+        )
     }
 }

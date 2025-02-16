@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="track_format">Название трека: %s</string>
-    <string name="al_format">Название альбома: %s</string>
+    <string name="album_name_format">Альбом: %s</string>
+    <string name="no_data">Нет данных</string>
+    <string name="playback_error_format">Произошла ошибка при проигрывании</string>
 </resources>

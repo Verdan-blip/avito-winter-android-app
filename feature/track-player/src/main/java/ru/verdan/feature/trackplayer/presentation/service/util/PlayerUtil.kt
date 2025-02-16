@@ -1,6 +1,7 @@
 package ru.verdan.feature.trackplayer.presentation.service.util
 
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.channels.awaitClose
@@ -50,9 +51,20 @@ fun Player.currentPlayingItemDurationAsFlow(): Flow<Long?> = callbackFlow {
 }
 
 fun Player.currentPlayingPositionAsFlow(): Flow<Long> = flow {
-
     while (true) {
         emit(currentPosition)
         delay(500)
     }
+}
+
+fun Player.errorsAsFlow(): Flow<Exception> = callbackFlow {
+    val listener = object : Player.Listener {
+
+        override fun onPlayerError(error: PlaybackException) {
+            trySendBlocking(error)
+        }
+    }
+
+    addListener(listener)
+    awaitClose { removeListener(listener) }
 }

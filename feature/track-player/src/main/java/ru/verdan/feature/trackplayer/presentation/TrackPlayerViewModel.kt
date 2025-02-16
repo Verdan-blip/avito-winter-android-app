@@ -11,10 +11,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.verdan.common.base.BaseViewModel
+import ru.verdan.common.base.mvvm.BaseEvent
 import ru.verdan.common.resource.ResourceProvider
 import ru.verdan.common.util.millisToMmSsString
 import ru.verdan.common.util.progressToTime
 import ru.verdan.common.util.timeToProgress
+import ru.verdan.feature.loaded.R
 import ru.verdan.feature.trackplayer.domain.usecase.DownloadTrackUseCase
 import ru.verdan.feature.trackplayer.domain.usecase.GetTrackUseCase
 import ru.verdan.feature.trackplayer.domain.usecase.SaveDownloadedTrackUseCase
@@ -60,23 +62,18 @@ class TrackPlayerViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            controller.state.collect { state ->
-                _currentTrack.value = state.currentPlayable
-                if (shouldTrackProgress) {
-                    _isPLaying.value = state.isPlaying
-                    _currentTimeDuration.value = state.duration.millisToMmSsString()
-                    _currentProgress.value = state.positionMs.timeToProgress(state.duration)
-                    _currentTimeProgress.value = state.positionMs.millisToMmSsString()
-                }
-            }
+            launch { collectControllerState() }
+            launch { collectControllerErrors() }
         }
     }
 
     fun onLaunch() {
         viewModelScope.launch {
-            if (controller.state.value.currentPlayable == null) {
-                val track = fetchTrack(queueTrackIds[index])
-                controller.play(track)
+            doSafeCall {
+                if (controller.state.value.currentPlayable == null) {
+                    val track = fetchTrack(queueTrackIds[index])
+                    controller.play(track)
+                }
             }
         }
     }
@@ -149,8 +146,30 @@ class TrackPlayerViewModel @AssistedInject constructor(
     }
 
     private suspend fun play(id: Long) {
-        val track = fetchTrack(id)
-        controller.play(track)
+        doSafeCall {
+            val track = fetchTrack(id)
+            controller.play(track)
+        }
+    }
+
+    private suspend fun collectControllerState() {
+        controller.state.collect { state ->
+            _currentTrack.value = state.currentPlayable
+            if (shouldTrackProgress) {
+                _isPLaying.value = state.isPlaying
+                _currentTimeDuration.value = state.duration.millisToMmSsString()
+                _currentProgress.value = state.positionMs.timeToProgress(state.duration)
+                _currentTimeProgress.value = state.positionMs.millisToMmSsString()
+            }
+        }
+    }
+
+    private suspend fun collectControllerErrors() {
+        controller.error.collect {
+            emitEvent(BaseEvent.ShowSnackbar(
+                resourceProvider.getString(R.string.playback_error_format)
+            ))
+        }
     }
 
     companion object {

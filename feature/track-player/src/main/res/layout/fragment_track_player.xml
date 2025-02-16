@@ -86,23 +86,31 @@
             android:id="@+id/ib_prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_gravity="center"
+            android:layout_marginEnd="@dimen/margin_medium"
             android:contentDescription="@string/default_content_description"
+            android:background="@drawable/round_button_background"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_prev_24" />
 
         <ImageButton
             android:id="@+id/ib_play_pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/size_normal"
+            android:layout_height="@dimen/size_normal"
             android:contentDescription="@string/default_content_description"
+            android:background="@drawable/round_button_background"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_play_24" />
 
         <ImageButton
             android:id="@+id/ib_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/margin_medium"
             android:contentDescription="@string/default_content_description"
+            android:background="@drawable/round_button_background"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_next_24" />
 
     </LinearLayout>
@@ -123,6 +131,8 @@
         android:layout_marginTop="@dimen/margin_medium"
         android:layout_gravity="center"
         android:contentDescription="@string/default_content_description"
+        android:background="@drawable/round_button_background"
+        android:scaleType="centerCrop"
         android:src="@drawable/save_24" />
 
 </LinearLayout>

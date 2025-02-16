@@ -20,14 +20,14 @@ import ru.verdan.feature.trackplayer.di.TrackPlayerComponentHolder
 import ru.verdan.feature.trackplayer.presentation.entity.TrackModel
 import ru.verdan.feature.trackplayer.presentation.receiver.DownloadCompletionReceiver
 
-class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
+class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayerViewModel>(
     id = R.layout.fragment_track_player
 ) {
     override val viewBinding by viewBinding(FragmentTrackPlayerBinding::bind)
 
     private var queueTrackIds: List<Long> = listOf()
 
-    private val viewModel by viewModels<TrackPlayerViewModel> {
+    override val viewModel by viewModels<TrackPlayerViewModel> {
         TrackPlayerComponentHolder
             .create(requireContext())
             .factoryOfViewFactory
@@ -53,6 +53,7 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
         super.onViewCreated(view, savedInstanceState)
         viewModel.onLaunch()
         viewBinding.apply {
+            initViews()
             ivCover.setImageResource(ru.verdan.core.theme.R.drawable.image_placeholder)
             ibPlayPause.setOnClickListener { viewModel.onPlayPause() }
             ibPrev.setOnClickListener { viewModel.onPlayPrevious() }
@@ -62,6 +63,7 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
                 onStartTrackingTouch = { progress -> viewModel.onProgressChange(progress) },
                 onStopTrackingTouch = { viewModel.onProgressChanged() }
             )
+            collectBaseEvents()
             collectViewModelStates()
         }
     }
@@ -79,6 +81,13 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
         }
     }
 
+    private fun FragmentTrackPlayerBinding.initViews() {
+        val noDataMessage = getString(R.string.no_data)
+        tvAlbum.text = noDataMessage
+        tvTitle.text = noDataMessage
+        tvArtist.text = noDataMessage
+    }
+
     private fun onCollectCurrentTrack(track: TrackModel?) {
         viewBinding.apply {
             track?.apply {
@@ -88,7 +97,7 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
                 }
                 tvTitle.text = title
                 tvArtist.text = artist
-                tvAlbum.text = albumTitle
+                tvAlbum.text = getString(R.string.album_name_format, albumTitle)
                 ibDownload.isVisible = !isSaved
             }
         }

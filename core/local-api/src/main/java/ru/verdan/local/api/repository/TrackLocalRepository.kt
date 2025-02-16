@@ -2,7 +2,7 @@ package ru.verdan.local.api.repository
 
 import ru.verdan.local.api.entity.TrackEntity
 
-interface TrackRepository {
+interface TrackLocalRepository {
 
     suspend fun downloadTrackFile(trackEntity: TrackEntity): Long
 
