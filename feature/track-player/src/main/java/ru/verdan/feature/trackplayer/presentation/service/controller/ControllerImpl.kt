@@ -21,6 +21,8 @@ import ru.verdan.feature.trackplayer.presentation.service.util.currentMediaItemA
 import ru.verdan.feature.trackplayer.presentation.service.util.currentPlayingItemDurationAsFlow
 import ru.verdan.feature.trackplayer.presentation.service.util.currentPlayingPositionAsFlow
 import ru.verdan.feature.trackplayer.presentation.service.util.errorsAsFlow
+import ru.verdan.feature.trackplayer.presentation.service.util.hasNextItemAsFlow
+import ru.verdan.feature.trackplayer.presentation.service.util.hasPreviousItemAsFlow
 import ru.verdan.feature.trackplayer.presentation.service.util.isPlayingAsFlow
 import javax.inject.Inject
 
@@ -43,6 +45,8 @@ class ControllerImpl @Inject constructor(
             launch { collectCurrentMediaItemFlow() }
             launch { collectCurrentPlayingPositionFlow() }
             launch { collectCurrentPlayingItemDurationFlow() }
+            launch { collectHasPreviousItemAsFlow() }
+            launch { collectHasNextItemAsFlow() }
             launch { collectErrorFlow() }
         }
     }
@@ -141,6 +145,24 @@ class ControllerImpl @Inject constructor(
                 .filterNotNull()
                 .collect { error ->
                     _error.emit(error)
+                }
+        }
+    }
+
+    private suspend fun collectHasNextItemAsFlow() {
+        player?.apply {
+            hasNextItemAsFlow()
+                .collect { hasNext ->
+                    _state.emit(_state.value.copy(hasNextPlayable = hasNext))
+                }
+        }
+    }
+
+    private suspend fun collectHasPreviousItemAsFlow() {
+        player?.apply {
+            hasPreviousItemAsFlow()
+                .collect { hasPrevious ->
+                    _state.emit(_state.value.copy(hasPreviousPlayable = hasPrevious))
                 }
         }
     }

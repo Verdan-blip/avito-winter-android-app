@@ -11,11 +11,12 @@ class HomeRouterImpl @Inject constructor(
     @Root private val navigator: Navigator
 ) : HomeRouter {
 
-    override fun navigateToPlayer(trackIds: List<Long>) {
+    override fun navigateToPlayer(trackIds: List<Long>, selectedTrackId: Long) {
         navigator.getNavController()?.navigate(
             resId = ru.verdan.R.id.action_global_trackPlayerFragment,
             args = Bundle().apply {
                 putLongArray(TrackPlayerFragment.KEY_QUEUE_TRACK_IDS, trackIds.toLongArray())
+                putLong(TrackPlayerFragment.KEY_SELECTED_TRACK, selectedTrackId)
             }
         )
     }

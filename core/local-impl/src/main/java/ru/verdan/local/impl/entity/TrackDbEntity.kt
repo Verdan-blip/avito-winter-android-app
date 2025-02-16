@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
     tableName = "tracks"
 )
 class TrackDbEntity(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo("id") val id: Long,
+    @PrimaryKey @ColumnInfo("id") val id: Long,
     @ColumnInfo("title") val title: String,
     @ColumnInfo("album_title") val albumTitle: String?,
     @ColumnInfo("artist") val artist: String,

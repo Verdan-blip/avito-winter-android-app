@@ -1,56 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/search_bar"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_chart_tracks"
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_chart_tracks"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"
+                tools:listitem="@layout/track_item" />
+
+            <include
+                android:id="@+id/progress_chart_tracks"
+                layout="@layout/progress_indicator_layout" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.google.android.material.search.SearchView
+            android:id="@+id/sv_query"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="5"
-            tools:listitem="@layout/track_item" />
+            android:layout_height="match_parent"
+            android:hint="@string/enter_to_search"
+            app:layout_anchor="@id/search_bar">
 
-        <include
-            android:id="@+id/progress_chart_tracks"
-            layout="@layout/progress_indicator_layout" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_found_tracks"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="true"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/padding_normal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"
+                tools:listitem="@layout/track_item" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <include
+                android:id="@+id/progress_found_tracks"
+                layout="@layout/progress_indicator_layout" />
 
-    <com.google.android.material.search.SearchView
-        android:id="@+id/sv_query"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/enter_to_search"
-        app:layout_anchor="@id/search_bar">
+        </com.google.android.material.search.SearchView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_found_tracks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/padding_normal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="5"
-            tools:listitem="@layout/track_item" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        <include
-            android:id="@+id/progress_found_tracks"
-            layout="@layout/progress_indicator_layout" />
-
-    </com.google.android.material.search.SearchView>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

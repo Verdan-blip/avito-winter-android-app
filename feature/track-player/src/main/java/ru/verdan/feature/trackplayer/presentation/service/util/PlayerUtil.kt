@@ -1,8 +1,11 @@
 package ru.verdan.feature.trackplayer.presentation.service.util
 
+import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Metadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
@@ -43,6 +46,50 @@ fun Player.currentPlayingItemDurationAsFlow(): Flow<Long?> = callbackFlow {
             if (playbackState == ExoPlayer.STATE_READY) {
                 trySendBlocking(duration)
             }
+        }
+    }
+
+    addListener(listener)
+    awaitClose { removeListener(listener) }
+}
+
+@OptIn(UnstableApi::class)
+fun Player.hasNextItemAsFlow(): Flow<Boolean> = callbackFlow {
+    trySendBlocking(false)
+    val listener = object : Player.Listener {
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            trySendBlocking(hasNextMediaItem())
+        }
+
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            trySendBlocking(hasNextMediaItem())
+        }
+
+        override fun onMetadata(metadata: Metadata) {
+            trySendBlocking(hasNextMediaItem())
+        }
+    }
+
+    addListener(listener)
+    awaitClose { removeListener(listener) }
+}
+
+@OptIn(UnstableApi::class)
+fun Player.hasPreviousItemAsFlow(): Flow<Boolean> = callbackFlow {
+    trySendBlocking(false)
+    val listener = object : Player.Listener {
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            trySendBlocking(hasPreviousMediaItem())
+        }
+
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            trySendBlocking(hasPreviousMediaItem())
+        }
+
+        override fun onMetadata(metadata: Metadata) {
+            trySendBlocking(hasPreviousMediaItem())
         }
     }
 

@@ -10,7 +10,7 @@ interface TrackLocalRepository {
 
     suspend fun getAll(): List<TrackEntity>
 
-    suspend fun getAllByName(title: String): List<TrackEntity>
+    suspend fun searchByQuery(query: String): List<TrackEntity>
 
     suspend fun getById(id: Long): TrackEntity?
 }

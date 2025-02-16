@@ -27,6 +27,7 @@ import ru.verdan.feature.trackplayer.presentation.service.controller.Controller
 
 class TrackPlayerViewModel @AssistedInject constructor(
     @Assisted("queueTrackIds") private val queueTrackIds: List<Long>,
+    @Assisted("selectedTrackId") private val selectedTrackId: Long,
     private val controller: Controller,
     private val getTrackUseCase: GetTrackUseCase,
     private val downloadTrackUseCase: DownloadTrackUseCase,
@@ -57,7 +58,6 @@ class TrackPlayerViewModel @AssistedInject constructor(
 
     private var shouldTrackProgress: Boolean = true
 
-    private var index: Int = 0
     private val downloadsMap: MutableMap<Long, TrackModel> = mutableMapOf()
 
     init {
@@ -70,9 +70,11 @@ class TrackPlayerViewModel @AssistedInject constructor(
     fun onLaunch() {
         viewModelScope.launch {
             doSafeCall {
-                if (controller.state.value.currentPlayable == null) {
-                    val track = fetchTrack(queueTrackIds[index])
+                if (controller.state.value.currentPlayable?.id != selectedTrackId) {
+                    controller.clear()
+                    val track = fetchTrack(selectedTrackId)
                     controller.play(track)
+                    launch { handleTrackQueueIds(queueTrackIds) }
                 }
             }
         }
@@ -88,39 +90,36 @@ class TrackPlayerViewModel @AssistedInject constructor(
 
     fun onPlayNext() {
         viewModelScope.launch {
-            if (index != queueTrackIds.lastIndex) {
-                play(queueTrackIds[--index])
-                _canPlayNext.value = true
-            } else {
-                _canPlayNext.value = false
+            if (canPlayNext.value) {
+                controller.playNext()
             }
         }
     }
 
     fun onPlayPrevious() {
         viewModelScope.launch {
-            if (index != 0) {
-                play(queueTrackIds[--index])
-                _canPlayNext.value = true
-            } else {
-                _canPlayNext.value = false
+            if (canPlayPrevious.value) {
+                controller.playPrevious()
             }
         }
     }
 
-    fun onProgressChange(progress: Int) {
+    fun onProgressStartTrackingTouch() {
         shouldTrackProgress = false
+    }
+
+    fun onProgressChange(progress: Int) {
         _currentProgress.value = progress
         _currentTimeProgress.value = progress
             .progressToTime(controller.state.value.duration)
             .millisToMmSsString()
     }
 
-    fun onProgressChanged() {
-        shouldTrackProgress = true
+    fun onProgressStopTrackingTouch() {
         controller.seekTo(_currentProgress.value
             .progressToTime(controller.state.value.duration)
         )
+        shouldTrackProgress = true
     }
 
     fun onDownloadTrack() {
@@ -141,15 +140,18 @@ class TrackPlayerViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun fetchTrack(id: Long): TrackModel {
-        return getTrackUseCase(id).toTrackModel()
+    private suspend fun handleTrackQueueIds(ids: List<Long>) {
+        val startIndex = ids.indexOf(selectedTrackId)
+        var i = startIndex + 1
+        while (i < ids.size) {
+            val track = fetchTrack(ids[i])
+            controller.add(track)
+            i++
+        }
     }
 
-    private suspend fun play(id: Long) {
-        doSafeCall {
-            val track = fetchTrack(id)
-            controller.play(track)
-        }
+    private suspend fun fetchTrack(id: Long): TrackModel {
+        return getTrackUseCase(id).toTrackModel()
     }
 
     private suspend fun collectControllerState() {
@@ -160,6 +162,8 @@ class TrackPlayerViewModel @AssistedInject constructor(
                 _currentTimeDuration.value = state.duration.millisToMmSsString()
                 _currentProgress.value = state.positionMs.timeToProgress(state.duration)
                 _currentTimeProgress.value = state.positionMs.millisToMmSsString()
+                _canPlayNext.value = state.hasNextPlayable
+                _canPlayPrevious.value = state.hasPreviousPlayable
             }
         }
     }
@@ -176,6 +180,7 @@ class TrackPlayerViewModel @AssistedInject constructor(
 
         class Factory @AssistedInject constructor(
             @Assisted("queueTrackIds") private val queueTrackIds: List<Long>,
+            @Assisted("selectedTrackId") private val selectedTracId: Long,
             private val controller: Controller,
             private val getTrackUseCase: GetTrackUseCase,
             private val downloadTrackUseCase: DownloadTrackUseCase,
@@ -187,6 +192,7 @@ class TrackPlayerViewModel @AssistedInject constructor(
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return TrackPlayerViewModel(
                     queueTrackIds = queueTrackIds,
+                    selectedTrackId = selectedTracId,
                     controller = controller,
                     getTrackUseCase = getTrackUseCase,
                     downloadTrackUseCase = downloadTrackUseCase,
@@ -198,7 +204,8 @@ class TrackPlayerViewModel @AssistedInject constructor(
             @AssistedFactory interface Factory {
 
                 fun create(
-                    @Assisted("queueTrackIds") queueTrackIds: List<Long>
+                    @Assisted("queueTrackIds") queueTrackIds: List<Long>,
+                    @Assisted("selectedTrackId") selectedTracId: Long
                 ): Companion.Factory
             }
         }

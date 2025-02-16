@@ -38,7 +38,7 @@ class LoadedTracksFragment : BaseFragment<FragmentLoadedTracksBinding, LoadedTra
     private val foundTracksAdapter by lazy {
         TrackAdapter(
             context = requireContext(),
-            onTrackClick = { viewModel.onTrackClick(it) }
+            onTrackClick = { viewModel.onFoundTrackClick(it) }
         )
     }
 

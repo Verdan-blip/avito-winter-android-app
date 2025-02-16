@@ -15,7 +15,7 @@ class SearchTracksByNameUseCase @Inject constructor(
 
     suspend operator fun invoke(name: String): List<LoadedTrack> {
         return withContext(dispatcher) {
-            trackLocalRepository.getAllByName(name).toLoadedTrackList()
+            trackLocalRepository.searchByQuery(name).toLoadedTrackList()
         }
     }
 }

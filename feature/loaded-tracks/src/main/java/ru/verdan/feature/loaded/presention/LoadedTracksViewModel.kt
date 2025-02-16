@@ -26,7 +26,7 @@ class LoadedTracksViewModel @Inject constructor(
     val foundTracks: StateFlow<List<TrackModel>?> get() = _foundTracks
 
     private val _showTracksProgressBar = MutableStateFlow(true)
-    val showTracksProgressBar: StateFlow<Boolean> get() = _showFoundTracksProgressBar
+    val showTracksProgressBar: StateFlow<Boolean> get() = _showTracksProgressBar
 
     private val _showFoundTracksProgressBar = MutableStateFlow(false)
     val showFoundTracksProgressBar: StateFlow<Boolean> get() = _showFoundTracksProgressBar
@@ -36,10 +36,10 @@ class LoadedTracksViewModel @Inject constructor(
 
     fun onLaunch() {
         viewModelScope.launch {
-            _showTracksProgressBar.emit(true)
+            _showTracksProgressBar.value = true
             val tracks = getLoadedTracksUseCase()
             _tracks.emit(tracks.toTrackModelList())
-            _showTracksProgressBar.emit(false)
+            _showTracksProgressBar.value = false
         }
     }
 
@@ -51,14 +51,22 @@ class LoadedTracksViewModel @Inject constructor(
         viewModelScope.launch {
             doSafeCall {
                 _showFoundTracksProgressBar.value = true
-                val tracks = searchTracksByNameUseCase(_query.value).toTrackModelList()
-                _tracks.value = tracks
+                val foundTracks = searchTracksByNameUseCase(_query.value).toTrackModelList()
+                _foundTracks.value = foundTracks
                 _showFoundTracksProgressBar.value = false
             }
         }
     }
 
+    fun onFoundTrackClick(trackModel: TrackModel) {
+        foundTracks.value?.also { tracks ->
+            loadedTracksRouter.navigateToPlayer(tracks.map { it.id }, trackModel.id)
+        }
+    }
+
     fun onTrackClick(trackModel: TrackModel) {
-        loadedTracksRouter.navigateToPlayer(listOf(trackModel).map { it.id })
+        tracks.value?.also { tracks ->
+            loadedTracksRouter.navigateToPlayer(tracks.map { it.id }, trackModel.id)
+        }
     }
 }

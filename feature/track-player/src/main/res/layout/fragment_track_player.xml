@@ -8,15 +8,17 @@
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/size_extra_large"
+        android:layout_height="@dimen/size_extra_large"
         app:cardCornerRadius="@dimen/corners_large">
 
         <ImageView
             android:id="@+id/iv_cover"
-            android:layout_width="@dimen/size_extra_large"
-            android:layout_height="@dimen/size_extra_large"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/image_placeholder"
             android:contentDescription="@string/default_content_description" />
 
     </androidx.cardview.widget.CardView>
@@ -133,6 +135,7 @@
         android:contentDescription="@string/default_content_description"
         android:background="@drawable/round_button_background"
         android:scaleType="centerCrop"
+        android:visibility="invisible"
         android:src="@drawable/save_24" />
 
 </LinearLayout>

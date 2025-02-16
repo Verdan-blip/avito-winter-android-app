@@ -22,9 +22,8 @@ internal class TrackLocalRepositoryImpl @Inject constructor(
     override suspend fun downloadTrackFile(trackEntity: TrackEntity): Long {
         val fileName = FILENAME_FORMAT.format(trackEntity.id)
         val request = DownloadManager.Request(trackEntity.audioUrl.toUri())
-            .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI
-                    or DownloadManager.Request.NETWORK_MOBILE
-            )
+            .setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+            .setMimeType("audio/mpeg")
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
         return downloadManager.enqueue(request)
@@ -42,12 +41,12 @@ internal class TrackLocalRepositoryImpl @Inject constructor(
         return trackDataSource.getById(id)
     }
 
-    override suspend fun getAllByName(title: String): List<TrackEntity> {
-        return trackDataSource.getAllByName(title)
+    override suspend fun searchByQuery(query: String): List<TrackEntity> {
+        return trackDataSource.searchByQuery(query)
     }
 
     companion object {
 
-        const val FILENAME_FORMAT = "track%s"
+        const val FILENAME_FORMAT = "track%s.mp3"
     }
 }

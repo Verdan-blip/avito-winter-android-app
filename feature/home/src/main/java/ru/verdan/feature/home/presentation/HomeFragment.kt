@@ -1,6 +1,7 @@
 package ru.verdan.feature.home.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -40,7 +41,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     private val foundTracksAdapter by lazy {
         TrackPagingAdapter(
             context = requireContext(),
-            onTrackClick = { viewModel.onTrackClick(it) }
+            onTrackClick = { viewModel.onFoundTrackClick(it) }
         )
     }
 
@@ -52,11 +53,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.apply {
+            collectBaseEvents()
+            collectStates()
             setupChartTracksRecyclerView()
             setupFoundTracksRecyclerView()
             setupSearchView()
-            collectBaseEvents()
-            collectStates()
         }
     }
 
@@ -83,6 +84,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
 
     private fun onCollectChartTracksProgressVisibility(isVisible: Boolean) {
         viewBinding.apply {
+            Log.d("ERROR", isVisible.toString())
             progressChartTracks.root.isVisible = isVisible
             rvChartTracks.isVisible = !isVisible
         }

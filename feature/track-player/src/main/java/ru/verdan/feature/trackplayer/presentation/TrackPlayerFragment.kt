@@ -26,12 +26,13 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
     override val viewBinding by viewBinding(FragmentTrackPlayerBinding::bind)
 
     private var queueTrackIds: List<Long> = listOf()
+    private var selectedTrackId: Long = -1L
 
     override val viewModel by viewModels<TrackPlayerViewModel> {
         TrackPlayerComponentHolder
             .create(requireContext())
             .factoryOfViewFactory
-            .create(queueTrackIds)
+            .create(queueTrackIds, selectedTrackId)
     }
 
     private val receiver = DownloadCompletionReceiver { id, uri ->
@@ -46,7 +47,7 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
             ContextCompat.RECEIVER_EXPORTED
         )
-        extractQueueTrackIds()
+        extractArgs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,8 +61,9 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
             ibNext.setOnClickListener { viewModel.onPlayNext() }
             ibDownload.setOnClickListener { viewModel.onDownloadTrack() }
             sbProgress.setOnSeekBarChangeListener(
-                onStartTrackingTouch = { progress -> viewModel.onProgressChange(progress) },
-                onStopTrackingTouch = { viewModel.onProgressChanged() }
+                onStartTrackingTouch = { viewModel.onProgressStartTrackingTouch() },
+                onProgressChanged = { progress -> viewModel.onProgressChange(progress) },
+                onStopTrackingTouch = { viewModel.onProgressStopTrackingTouch() }
             )
             collectBaseEvents()
             collectViewModelStates()
@@ -73,11 +75,12 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
         requireContext().unregisterReceiver(receiver)
     }
 
-    private fun extractQueueTrackIds() {
+    private fun extractArgs() {
         arguments?.apply {
             getLongArray(KEY_QUEUE_TRACK_IDS)?.also { ids ->
                 queueTrackIds = ids.toList()
             }
+            selectedTrackId = getLong(KEY_SELECTED_TRACK)
         }
     }
 
@@ -159,5 +162,6 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayer
     companion object {
 
         const val KEY_QUEUE_TRACK_IDS = "queue_track_ids"
+        const val KEY_SELECTED_TRACK = "selected_track"
     }
 }
