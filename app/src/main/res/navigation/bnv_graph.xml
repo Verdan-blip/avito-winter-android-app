@@ -9,4 +9,9 @@
         tools:layout="@layout/fragment_home"
         android:name="ru.verdan.feature.home.presentation.HomeFragment"
         android:label="HomeFragment" />
+    <fragment
+        android:id="@+id/loadedTracksFragment"
+        tools:layout="@layout/fragment_loaded_tracks"
+        android:name="ru.verdan.feature.loaded.presention.LoadedTracksFragment"
+        android:label="LoadedTracksFragment" />
 </navigation>

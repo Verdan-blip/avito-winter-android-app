@@ -1,6 +1,9 @@
 package ru.verdan.presentation
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import ru.verdan.App
@@ -18,9 +21,8 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdgeAndSetupInsets()
-
         setContentView(R.layout.activity_main)
+        enableEdgeToEdgeAndSetupInsets()
 
         (application as App).appComponent
             .inject(this)
@@ -43,11 +45,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun enableEdgeToEdgeAndSetupInsets() {
-        //enableEdgeToEdge()
-        /*ViewCompat.setOnApplyWindowInsetsListener(viewBinding.fcvRoot) { v, insets ->
+        enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fcv_root)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-        }*/
+        }
     }
 }

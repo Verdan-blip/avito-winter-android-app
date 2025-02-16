@@ -19,8 +19,8 @@ class TrackDataSource @Inject constructor(
         trackDao.insert(track.toTrackDbEntity())
     }
 
-    suspend fun getAllByName(name: String): List<TrackEntity> {
-        return trackDao.getAllByName(name).toTrackEntityList()
+    suspend fun searchByQuery(query: String): List<TrackEntity> {
+        return trackDao.getAllByName(query).toTrackEntityList()
     }
 
     suspend fun getById(id: Long): TrackEntity? {

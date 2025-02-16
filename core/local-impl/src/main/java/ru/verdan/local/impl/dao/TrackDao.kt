@@ -14,8 +14,12 @@ interface TrackDao {
     @Insert
     suspend fun insert(track: TrackDbEntity)
 
-    @Query("SELECT * FROM tracks WHERE title = :title")
-    suspend fun getAllByName(title: String): List<TrackDbEntity>
+    @Query("SELECT * FROM tracks WHERE " +
+            "title LIKE '%' || :name || '%' OR " +
+            "artist LIKE '%' || :name || '%' OR " +
+            "album_title LIKE '%' || :name || '%'"
+    )
+    suspend fun getAllByName(name: String): List<TrackDbEntity>
 
     @Query("SELECT * FROM tracks WHERE id = :id")
     suspend fun getById(id: Long): TrackDbEntity?

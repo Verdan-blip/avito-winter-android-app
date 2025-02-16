@@ -25,7 +25,7 @@ class TrackViewHolder(
         track.apply {
             viewBinding.apply {
                 tvTitle.text = title
-                tvArtist.text = artists
+                tvArtist.text = artist
                 ivCover.load(coverUrl) {
                     crossfade(true)
                     error(R.drawable.image_placeholder)

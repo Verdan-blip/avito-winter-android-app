@@ -7,7 +7,7 @@ internal fun Track.toTrackModelList(): TrackModel =
     TrackModel(
         id = id,
         title = title,
-        artists = artist,
+        artist = artist,
         coverUrl = coverUrl
     )
 

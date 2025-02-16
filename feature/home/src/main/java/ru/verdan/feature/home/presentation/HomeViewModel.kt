@@ -32,7 +32,7 @@ class HomeViewModel @Inject constructor(
     val foundTracks: StateFlow<PagingData<TrackModel>> get() = _foundTracks
 
     private val _showChartTracksProgressBar = MutableStateFlow(true)
-    val showChartTracksProgressBar: StateFlow<Boolean> get() = _showFoundTracksProgressBar
+    val showChartTracksProgressBar: StateFlow<Boolean> get() = _showChartTracksProgressBar
 
     private val _showFoundTracksProgressBar = MutableStateFlow(false)
     val showFoundTracksProgressBar: StateFlow<Boolean> get() = _showFoundTracksProgressBar
@@ -42,10 +42,10 @@ class HomeViewModel @Inject constructor(
 
     fun onLaunch() {
         viewModelScope.launch {
-            _showChartTracksProgressBar.emit(true)
+            _showChartTracksProgressBar.value = true
             val chartTracks = getChartTracksUseCase()
             _chartTracks.emit(chartTracks.toTrackModelList())
-            _showChartTracksProgressBar.emit(false)
+            _showChartTracksProgressBar.value = false
         }
     }
 
@@ -64,14 +64,26 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onFoundTrackClick(trackModel: TrackModel) {
+        homeRouter.navigateToPlayer(
+            listOf(trackModel).map { it.id },
+            trackModel.id
+        )
+    }
+
     fun onTrackClick(trackModel: TrackModel) {
-        homeRouter.navigateToPlayer(listOf(trackModel).map { it.id })
+        chartTracks.value?.also { tracks ->
+            homeRouter.navigateToPlayer(
+                tracks.map { it.id },
+                trackModel.id
+            )
+        }
     }
 
     private suspend fun collectFoundTracks(flow: Flow<PagingData<Track>>) {
         flow.collect { trackData ->
-            _showFoundTracksProgressBar.value = false
             _foundTracks.emit(trackData.map { it.toTrackModelList() })
+            _showFoundTracksProgressBar.value = false
         }
     }
 }

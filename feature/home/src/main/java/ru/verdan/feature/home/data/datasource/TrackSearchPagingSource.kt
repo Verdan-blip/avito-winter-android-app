@@ -37,7 +37,6 @@ internal class TrackSearchPagingSource @AssistedInject constructor(
                 nextKey = if (index < limit) index + step else null
             )
         } catch (e: Exception) {
-            Log.d("ERROR", e.toString())
             LoadResult.Error(e)
         }
     }

@@ -24,8 +24,8 @@ internal class TrackPlayerDataModule {
     @Provides
     fun provideTrackRepository(
         trackDataSource: TrackDataSource,
-        trackRepository: ru.verdan.local.api.repository.TrackRepository
+        trackLocalRepository: ru.verdan.local.api.repository.TrackLocalRepository
     ): TrackRepository {
-        return TrackRepositoryImpl(trackDataSource, trackRepository)
+        return TrackRepositoryImpl(trackDataSource, trackLocalRepository)
     }
 }

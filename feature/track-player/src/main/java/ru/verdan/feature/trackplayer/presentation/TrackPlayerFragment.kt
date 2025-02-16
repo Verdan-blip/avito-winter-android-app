@@ -20,18 +20,19 @@ import ru.verdan.feature.trackplayer.di.TrackPlayerComponentHolder
 import ru.verdan.feature.trackplayer.presentation.entity.TrackModel
 import ru.verdan.feature.trackplayer.presentation.receiver.DownloadCompletionReceiver
 
-class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
+class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding, TrackPlayerViewModel>(
     id = R.layout.fragment_track_player
 ) {
     override val viewBinding by viewBinding(FragmentTrackPlayerBinding::bind)
 
     private var queueTrackIds: List<Long> = listOf()
+    private var selectedTrackId: Long = -1L
 
-    private val viewModel by viewModels<TrackPlayerViewModel> {
+    override val viewModel by viewModels<TrackPlayerViewModel> {
         TrackPlayerComponentHolder
             .create(requireContext())
             .factoryOfViewFactory
-            .create(queueTrackIds)
+            .create(queueTrackIds, selectedTrackId)
     }
 
     private val receiver = DownloadCompletionReceiver { id, uri ->
@@ -46,22 +47,25 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
             ContextCompat.RECEIVER_EXPORTED
         )
-        extractQueueTrackIds()
+        extractArgs()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.onLaunch()
         viewBinding.apply {
+            initViews()
             ivCover.setImageResource(ru.verdan.core.theme.R.drawable.image_placeholder)
             ibPlayPause.setOnClickListener { viewModel.onPlayPause() }
             ibPrev.setOnClickListener { viewModel.onPlayPrevious() }
             ibNext.setOnClickListener { viewModel.onPlayNext() }
             ibDownload.setOnClickListener { viewModel.onDownloadTrack() }
             sbProgress.setOnSeekBarChangeListener(
-                onStartTrackingTouch = { progress -> viewModel.onProgressChange(progress) },
-                onStopTrackingTouch = { viewModel.onProgressChanged() }
+                onStartTrackingTouch = { viewModel.onProgressStartTrackingTouch() },
+                onProgressChanged = { progress -> viewModel.onProgressChange(progress) },
+                onStopTrackingTouch = { viewModel.onProgressStopTrackingTouch() }
             )
+            collectBaseEvents()
             collectViewModelStates()
         }
     }
@@ -71,12 +75,20 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
         requireContext().unregisterReceiver(receiver)
     }
 
-    private fun extractQueueTrackIds() {
+    private fun extractArgs() {
         arguments?.apply {
             getLongArray(KEY_QUEUE_TRACK_IDS)?.also { ids ->
                 queueTrackIds = ids.toList()
             }
+            selectedTrackId = getLong(KEY_SELECTED_TRACK)
         }
+    }
+
+    private fun FragmentTrackPlayerBinding.initViews() {
+        val noDataMessage = getString(R.string.no_data)
+        tvAlbum.text = noDataMessage
+        tvTitle.text = noDataMessage
+        tvArtist.text = noDataMessage
     }
 
     private fun onCollectCurrentTrack(track: TrackModel?) {
@@ -88,7 +100,7 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
                 }
                 tvTitle.text = title
                 tvArtist.text = artist
-                tvAlbum.text = albumTitle
+                tvAlbum.text = getString(R.string.album_name_format, albumTitle)
                 ibDownload.isVisible = !isSaved
             }
         }
@@ -150,5 +162,6 @@ class TrackPlayerFragment : BaseFragment<FragmentTrackPlayerBinding>(
     companion object {
 
         const val KEY_QUEUE_TRACK_IDS = "queue_track_ids"
+        const val KEY_SELECTED_TRACK = "selected_track"
     }
 }

@@ -20,6 +20,10 @@ fun TrackModel.toMediaItem(): MediaItem {
         .build()
 }
 
+fun List<TrackModel>.toMediaItemList(): List<MediaItem> {
+    return map { it.toMediaItem() }
+}
+
 fun MediaItem.toTrackModel(): TrackModel {
     return TrackModel(
         id = mediaId.toLong(),

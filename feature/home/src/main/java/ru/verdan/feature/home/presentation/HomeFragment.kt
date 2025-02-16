@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingData
+import com.google.android.material.search.SearchView
 import dev.androidbroadcast.vbpd.viewBinding
 import kotlinx.coroutines.launch
 import ru.verdan.common.base.BaseFragment
@@ -19,12 +20,12 @@ import ru.verdan.feature.home.R
 import ru.verdan.feature.home.databinding.FragmentHomeBinding
 import ru.verdan.feature.home.di.HomeComponentHolder
 
-class HomeFragment : BaseFragment<FragmentHomeBinding>(
+class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(
     id = R.layout.fragment_home
 ) {
     override val viewBinding by viewBinding(FragmentHomeBinding::bind)
     
-    private val viewModel by viewModels<HomeViewModel> {
+    override val viewModel by viewModels<HomeViewModel> {
         HomeComponentHolder
             .get(requireContext())
             .viewModelFactory
@@ -40,7 +41,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private val foundTracksAdapter by lazy {
         TrackPagingAdapter(
             context = requireContext(),
-            onTrackClick = { viewModel.onTrackClick(it) }
+            onTrackClick = { viewModel.onFoundTrackClick(it) }
         )
     }
 
@@ -52,21 +53,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.apply {
+            collectBaseEvents()
+            collectStates()
             setupChartTracksRecyclerView()
             setupFoundTracksRecyclerView()
             setupSearchView()
-            viewModel.chartTracks.collectWithLifecycle(
-                viewLifecycleOwner, ::onCollectChartTracks
-            )
-            viewModel.foundTracks.collectWithLifecycle(
-                viewLifecycleOwner, ::onCollectFoundTracks
-            )
-            viewModel.showChartTracksProgressBar.collectWithLifecycle(
-                viewLifecycleOwner, ::onCollectChartTracksProgressVisibility
-            )
-            viewModel.showFoundTracksProgressBar.collectWithLifecycle(
-                viewLifecycleOwner, ::onCollectFoundTracksProgressVisibility
-            )
         }
     }
 
@@ -82,9 +73,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private fun FragmentHomeBinding.setupSearchView() {
         svQuery.editText.setText(viewModel.query.value)
-        svQuery.editText.onTextChange { text ->
-            viewModel.onQueryChange(text)
+        svQuery.addTransitionListener { _, _, newState ->
+            when (newState) {
+                SearchView.TransitionState.SHOWN -> {
+                    rvChartTracks.isVisible = false
+                }
+                SearchView.TransitionState.HIDDEN -> {
+                    rvChartTracks.isVisible = true
+                }
+                else -> Unit
+            }
         }
+        svQuery.editText.onTextChange { text -> viewModel.onQueryChange(text) }
         svQuery.editText.setOnEditorActionListener { _, _, _ ->
             viewModel.onQuerySubmit()
             true
@@ -113,5 +113,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         lifecycleScope.launch {
             foundTracksAdapter.submitData(tracks)
         }
+    }
+
+    private fun collectStates() {
+        viewModel.chartTracks.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectChartTracks
+        )
+        viewModel.foundTracks.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectFoundTracks
+        )
+        viewModel.showChartTracksProgressBar.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectChartTracksProgressVisibility
+        )
+        viewModel.showFoundTracksProgressBar.collectWithLifecycle(
+            viewLifecycleOwner, ::onCollectFoundTracksProgressVisibility
+        )
     }
 }

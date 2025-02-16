@@ -8,13 +8,13 @@ import ru.verdan.feature.trackplayer.domain.repository.TrackRepository
 import javax.inject.Inject
 
 class GetTrackUseCase @Inject constructor(
-    private val getTrackRepository: TrackRepository,
+    private val trackRepository: TrackRepository,
     @IODispatcher private val dispatcher: CoroutineDispatcher
 ) {
 
     suspend operator fun invoke(id: Long): Track {
         return withContext(dispatcher) {
-            getTrackRepository.getTrackById(id)
+            trackRepository.getTrackById(id)
         }
     }
 }

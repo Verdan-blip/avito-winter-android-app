@@ -2,7 +2,7 @@ package ru.verdan.local.api.repository
 
 import ru.verdan.local.api.entity.TrackEntity
 
-interface TrackRepository {
+interface TrackLocalRepository {
 
     suspend fun downloadTrackFile(trackEntity: TrackEntity): Long
 
@@ -10,7 +10,7 @@ interface TrackRepository {
 
     suspend fun getAll(): List<TrackEntity>
 
-    suspend fun getAllByName(title: String): List<TrackEntity>
+    suspend fun searchByQuery(query: String): List<TrackEntity>
 
     suspend fun getById(id: Long): TrackEntity?
 }

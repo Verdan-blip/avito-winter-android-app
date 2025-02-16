@@ -15,15 +15,15 @@
         android:padding="@dimen/padding_normal">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/size_normal"
+            android:layout_height="@dimen/size_normal"
             app:cardCornerRadius="@dimen/corners_normal">
 
             <ImageView
                 android:id="@+id/iv_cover"
                 android:contentDescription="@string/default_content_description"
-                android:layout_width="@dimen/size_normal"
-                android:layout_height="@dimen/size_normal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/image_placeholder" />
 
